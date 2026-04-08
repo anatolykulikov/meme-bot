@@ -10,7 +10,7 @@
 ### Mattermost
 Для локального тестирования мема предсказания использовать данный запрос:
 ```bash
-curl -X POST http://localhost:3000/mem \
+curl -X POST http://localhost:3000/mm/mem \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "user_id=test_user_123" \
   -d "user_name=alex" \
