@@ -17,7 +17,7 @@ export function initial() {
 
     app.use('/memes', express.static(getMemeDir()));
 
-    app.get('/mm/mem', getMem)
+    app.post('/mm/mem', getMem)
 
 
     app.listen(PORT, () => {

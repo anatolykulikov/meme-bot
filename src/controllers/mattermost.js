@@ -1,4 +1,5 @@
 import { getOrCreateMeme } from '../actions/getOrCreateMeme.js';
+import {loadMemes} from "../utils/getMemeDir.js";
 
 function response(res, text, attachments = []) {
     const resp = {
@@ -17,16 +18,16 @@ function response(res, text, attachments = []) {
 export function getMem(req, res) {
     const userId = req.body.user_id || 'anon';
 
-    if (memes.length === 0) {
+    if (loadMemes().length === 0) {
         return response(res,'Нет мемов 😢');
     }
 
-    const memePath = getOrCreateMeme(userId);
+    const memePath = getOrCreateMeme('mm', userId);
 
     return response(
         res,
         '',
-        [{ image_url: baseUrl + memePath }
+        [{ image_url: memePath }
         ]
     )
 }

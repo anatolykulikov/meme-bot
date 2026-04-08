@@ -1,20 +1,10 @@
 import * as path from 'path';
 import crypto from 'crypto';
-import { readFileSync, writeFileSync } from 'fs';
+import fs from 'fs';
 import { getToday } from '../utils/getToday.js';
 import { logInfo } from '../utils/logger.js';
 import { getBaseUrl } from '../utils/getBaseUrl.js';
-import { getMemeDir } from '../utils/getMemeDir.js';
-
-/**
- * Получить все картинки из папки
- * @return {*}
- */
-function loadMemes() {
-    return fs.readdirSync(getMemeDir())
-        .filter(f => /\.(jpg|jpeg|png|gif)$/i.test(f))
-        .map(f => `/memes/${f}`);
-}
+import { loadMemes } from '../utils/getMemeDir.js';
 
 /**
  * Генерировать мем для пользователя
@@ -37,7 +27,7 @@ function generateMeme(service, userId) {
  * @return {*}
  */
 function getUserFile(service, userId) {
-    return path.join(path.join(__dirname, 'remember'), `mem_${service}_${userId}.json`);
+    return path.join(path.join(process.cwd(), 'remember'), `mem_${service}_${userId}.json`);
 }
 
 /**
@@ -52,7 +42,7 @@ export function getOrCreateMeme(service, userId) {
 
     if (fs.existsSync(filePath)) {
         try {
-            const data = JSON.parse(readFileSync(filePath, "utf-8"));
+            const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
             if (data.date === today && data.meme) {
                 return data.meme;
             }
@@ -62,9 +52,15 @@ export function getOrCreateMeme(service, userId) {
     }
 
     // создаём новый
-    const meme = generateMeme(userId);
+    const meme = generateMeme(service, userId);
 
-    writeFileSync(filePath, JSON.stringify({
+    // убедимся, что директория существует
+    const dir = path.dirname(filePath);
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+
+    fs.writeFileSync(filePath, JSON.stringify({
         date: today,
         meme: meme
     }, null, 2));
