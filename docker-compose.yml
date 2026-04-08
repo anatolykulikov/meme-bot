@@ -1,0 +1,14 @@
+services:
+  meme-bot:
+    build: .
+    container_name: meme-bot
+    ports:
+      - "${HOST_PORT}:${PORT}"
+    environment:
+      - PORT=${PORT}
+      - BASE_URL=${BASE_URL}
+      - TZ=${TZ}
+    volumes:
+      - ./memes:/app/memes
+      - ./remember:/app/remember
+    restart: unless-stopped
